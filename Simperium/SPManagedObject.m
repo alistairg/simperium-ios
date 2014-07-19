@@ -37,7 +37,7 @@
 
 - (void)configureBucket {
 	
-    NSDictionary *bucketList = nil;
+    __block NSDictionary *bucketList = nil;
     NSManagedObjectContext *managedObjectContext = self.managedObjectContext;
 	
     // Get the MOC's Grandpa (writerContext)
@@ -45,12 +45,16 @@
         managedObjectContext = managedObjectContext.parentContext;
     }
 
+    /*
 	// Check
-	bucketList = managedObjectContext.userInfo[SPCoreDataBucketListKey];
+    [self.managedObjectContext performBlockAndWait:^{
+        bucketList = managedObjectContext.userInfo[SPCoreDataBucketListKey];
+    }];
 	
-    if (!bucketList) {
+    if (!bucketList)
+    {
         NSLog(@"Simperium error: bucket list not loaded. Ensure Simperium is started before any objects are fetched.");
-	}
+	}*/
 	
     bucket = [bucketList objectForKey:[[self entity] name]];
 }

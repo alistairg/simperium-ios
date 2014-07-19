@@ -113,11 +113,20 @@ static NSInteger const SPWorkersDone	= 0;
 
 - (void)setBucketList:(NSDictionary *)dict {
     // Set a custom field on the context so that objects can figure out their own buckets when they wake up
-	NSMutableDictionary* bucketList = self.writerManagedObjectContext.userInfo[SPCoreDataBucketListKey];
+	__block NSMutableDictionary* bucketList;
+    [self.writerManagedObjectContext performBlockAndWait:^{
+        bucketList = self.writerManagedObjectContext.userInfo[SPCoreDataBucketListKey];
+    }];
 	
-	if (!bucketList) {
+	if (!bucketList)
+    {
 		bucketList = [NSMutableDictionary dictionary];
-		[self.writerManagedObjectContext.userInfo setObject:bucketList forKey:SPCoreDataBucketListKey];
+        [self.writerManagedObjectContext performBlockAndWait:^{
+            
+            [self.writerManagedObjectContext.userInfo setObject:bucketList forKey:SPCoreDataBucketListKey];
+            
+        }];
+		
 	}
 	
 	[bucketList addEntriesFromDictionary:dict];
